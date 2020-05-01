@@ -22,4 +22,6 @@ Instructions
 
 5- run docker run -it --rm -p 9229:9229 --name test -v "$PWD":<path_to_code> -w <path_to_code> basic-node-image /bin/bash
 
-6- run node <some_js_file.js> to run an applcation
+7- run npm install
+
+7- run node <some_js_file.js> to run an applcation
