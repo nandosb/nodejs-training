@@ -24,4 +24,7 @@ Instructions
 
 7- run npm install
 
-7- run node <some_js_file.js> to run an applcation
+8- run node <some_js_file.js> to run an applcation
+
+
+If at any give point you see some ".template" file, please make a copy and remove the ".template" extension
