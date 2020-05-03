@@ -29,8 +29,6 @@ yargs.command({
         }
 
         myWeather.getCurrentTemperature(argv.location, unit)
-
-        myWeather.getLatLongFromAddress(argv.location)
     }
 
 })

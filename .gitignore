@@ -1,4 +1,6 @@
-/playground
 **/node_modules
 **/package-lock.json
 *.txt
+
+/playground
+weather-app/config.json

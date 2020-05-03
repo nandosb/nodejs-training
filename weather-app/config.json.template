@@ -1,0 +1,4 @@
+{
+    "mapbox_token":"<your_token_from_mapbox.com>",
+    "weatherstack_token":"<your_token_from_weatherstack.com>"
+}

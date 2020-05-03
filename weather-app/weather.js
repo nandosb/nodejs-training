@@ -1,13 +1,53 @@
-const fs = require('fs')
 const request = require('postman-request')
+
+const utils = require('./utils.js')
 
 const log = console.log
 
 const getCurrentTemperature = (location, unit) => {
-    weatherstackApiKey = _getWeatherStackToken()
+    getLatLongFromAddress(location, (error, data) => {
+        if (error) {
+            log("Error: " + error)
+        } else {
+            log('Checking weather for: ' + data.location)
+            _getWeatherForLocation(data.latitude, data.longitude, unit)
+        }
+    })
+}
+
+const getLatLongFromAddress = (address, callback) => {
+    token = utils.getMaboxToken()
+    baseUrl = 'https://api.mapbox.com'
+
+    url = baseUrl + '/geocoding/v5/mapbox.places/' + encodeURIComponent(address) + '.json?limit=1&access_token=' + token
+
+    request({
+        url: url,
+        json: true,
+        },
+        (error, response) => {
+            if (error) {
+                callback('Unable to connect to geolocalization service', undefined)
+            } else if (response.body.features === undefined || response.body.features.length === 0) {
+                callback('Error with input parameters. Unable to find location, try another search', undefined)
+            }
+            else {
+                data = {
+                    location: response.body.features[0].place_name,
+                    latitude: response.body.features[0].center[1],
+                    longitude: response.body.features[0].center[0],
+                }
+                callback(undefined, data)
+            }
+        }
+    )
+}
+
+const _getWeatherForLocation = (latitude, longitude, unit) => {
+    weatherstackApiKey = utils.getWeatherStackToken()
     baseUrl = 'http://api.weatherstack.com'
 
-    url = baseUrl + '/current?access_key=' + weatherstackApiKey + '&query=' + encodeURI(location) +'&units='+unit
+    url = baseUrl + '/current?access_key=' + weatherstackApiKey + '&query=' + latitude + ',' + longitude +'&units='+unit
 
     request({
         url: url,
@@ -20,55 +60,17 @@ const getCurrentTemperature = (location, unit) => {
                 log(response.body.error.type)
                 log(response.body.error.info)
             } else {
-                log("Checking the weather:")
                 currentTemperature = response.body.current.temperature
                 feelsLikeTemperature = response.body.current.feelslike
                 weatherDescription = response.body.current.weather_descriptions[0]
+                windDirection = response.body.current.wind_dir
+                windSpeed = response.body.current.wind_speed
         
-                log(weatherDescription + ". It's currently " + currentTemperature + " degrees out. It feels like " + feelsLikeTemperature + " degrees")
+                log(weatherDescription + ". It's currently " + currentTemperature + " degrees out.")
+                log("It feels like " + feelsLikeTemperature + " degrees. Wind from '" + windDirection + "'@" + windSpeed + " speed" )
             }
         }
     )
-}
-
-const getLatLongFromAddress = (address) => {
-    token = _getMaboxToken()
-    baseUrl = 'https://api.mapbox.com'
-
-    url = baseUrl + '/geocoding/v5/mapbox.places/' + encodeURI(address) + '.json?limit=1&access_token=' + token
-
-    request({
-        url: url,
-        json: true,
-        },
-        (error, response) => {
-            if (error) {
-                log('Unable to connect to geolocalization service')
-            } else if (response.body.features === undefined || response.body.features.length === 0) {
-                log('Error with input parameters. Unable to find location, try another search')
-            }
-            else {
-                log("Seeking location - " + address + ":")
-                log(response.body.features[0].place_name)
-                log("Coordinates: " + response.body.features[0].center)
-            }
-        }
-    )
-}
-
-const _getWeatherStackToken = () => {
-    config = _loadConfig()
-    return config.mapbox_token.trim()
-}
-
-const _getMaboxToken = () => {
-    config = _loadConfig()
-    return config.weatherstack_token.trim()
-}
-
-const _loadConfig = () => {
-    buffer = fs.readFileSync('config.json')
-    return JSON.parse(buffer.toString())
 }
 
 module.exports = {
