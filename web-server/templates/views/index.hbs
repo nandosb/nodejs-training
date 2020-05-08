@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>{{title}}</title>
+</head>
+<body>
+    {{>header}}
+    <h1>Use this to get the weather</h1>
+    <form>
+        <input type="text" placeholder="Location">
+        <button>Search</button>
+    </form>
+    <div id="error"></div>
+    <div id="forecast"></div>
+    {{>footer}}
+    <script src="/js/app.js"></script>
+</body>
+</html>
