@@ -112,7 +112,7 @@ const appInit = (app, port = 80) => {
     })
 }
 
-let port = 80
+let port = process.env.PORT || 80
 if (process.argv[2]) {
     port = process.argv[2]
 }
