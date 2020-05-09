@@ -5,4 +5,4 @@
 /playground
 weather-app/config.json
 
-web-server/config.json
+web-server/src/utils/config.json
