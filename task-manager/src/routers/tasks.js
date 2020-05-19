@@ -8,7 +8,6 @@ router.get('/tasks', async (req, res) => {
         const tasks = await Task.find({})
         res.status(200).send(tasks)
     } catch(e) {
-        log(e)
         res.status(500).send(e.message)
     }
 })
@@ -37,11 +36,15 @@ router.patch('/tasks/:id', async (req, res) => {
     }
 
     try {
-        const task = await Task.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true})
+        const task = await Task.findById(req.param.id)
 
         if (!task) {
             return res.status(404).send()
         }
+
+        updates.forEach((fieldToUpdate) => task[fieldToUpdate] = req.body[fieldToUpdate])
+
+        await task.save()
 
         res.status(200).send(task)
     } catch(e) {
@@ -53,7 +56,6 @@ router.patch('/tasks/:id', async (req, res) => {
 router.post('/tasks', async (req, res) => {
 
     try {
-        log(req.body)
         const task = new Task(req.body)
         await task.save()
         res.status(201).send(task)

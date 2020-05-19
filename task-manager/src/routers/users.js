@@ -6,7 +6,6 @@ const User = require('../models/user')
 
 router.post('/users', async (req, res) => {
     try {
-        log(req.body)
         const user = new User(req.body)
         await user.save()        
         res.status(201).send(user)
@@ -47,11 +46,16 @@ router.patch('/users/:id', async(req, res) => {
     }
 
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+        const user = await User.findById(req.params.id)
 
         if (!user) {
             return res.status(404).send()
         }
+        
+        updates.forEach( (updateField) => user[updateField] = req.body[updateField] )
+
+        await user.save()
+
         res.status(200).send(user)
     } catch(e) {
         res.status(200).send(e.message)
