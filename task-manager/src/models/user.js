@@ -30,7 +30,8 @@ const User = mongoose.model('User', {
         minlength: 7,
         trim: true,
         validate(value) {
-            if(value.toLowerCase().includes('password')) {
+            if( value.length === 'password'.length &&
+                value.toLowerCase().includes('password')) {
                 throw new Error('Invalid password, please a different one')
             }
         }
