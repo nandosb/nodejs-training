@@ -1,26 +1,67 @@
 const express = require('express')
+const authentication = require('../middlewares/authentication')
+const User = require('../models/user')
 const router = new express.Router()
 
-const User = require('../models/user')
 
 
 router.post('/users', async (req, res) => {
+    const user = new User(req.body)
+
     try {
-        const user = new User(req.body)
         await user.save()        
-        res.status(201).send(user)
+        const token = await user.generateAuthToken()
+        
+        res.status(201).send({user, token})
     } catch (e) {
         res.status(400).send(e.message)
     }
 })
 
-router.get('/users', async (req, res) => {
+router.post('/users/login', async (req, res) => {
     try {
-        const users = await User.find({})
-        res.status(200).send(users)
+        const user = await User.findByCredentials(req.body.email, req.body.password)
+        
+        let token = req.token
+
+        if (!req.token) {
+            token = await user.generateAuthToken()
+        }
+
+        res.status(200).send({ user, token })
+    } catch(e) {
+        res.status(400).send(e.message)
+    }
+})
+
+router.post('/users/logout', authentication, async (req, res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((tokenObject) => {
+            return tokenObject.token !== req.token
+        })
+
+        await req.user.save()
+
+        res.send()
+
     } catch(e) {
         res.status(500).send(e.message)
     }
+})
+
+router.post('/users/logoutAll', authentication, async (req, res) => {
+    try {
+        req.user.tokens = []
+        await req.user.save()
+
+        res.status(200).send()
+    } catch (e) {
+        res.status(500).send(e.message)
+    }
+})
+
+router.get('/users/me', authentication ,async (req, res) => {
+    res.send(req.user) 
 })
 
 router.get('/users/:id', async (req, res) => {
@@ -51,7 +92,7 @@ router.patch('/users/:id', async(req, res) => {
         if (!user) {
             return res.status(404).send()
         }
-        
+
         updates.forEach( (updateField) => user[updateField] = req.body[updateField] )
 
         await user.save()
