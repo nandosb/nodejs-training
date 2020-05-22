@@ -48,6 +48,16 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
+userSchema.methods.toJSON = function () {
+    const user = this
+    const userObject = user.toObject()
+
+    delete userObject.password
+    delete userObject.tokens
+
+    return userObject
+}
+
 userSchema.methods.generateAuthToken = async function() {
     const user = this
 
@@ -64,13 +74,13 @@ userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email })
 
     if ( !user ) {
-        throw new Error('Unable to login!: username')
+        throw new Error('Unable to login!')
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password)
 
     if ( !passwordMatch ) {
-        throw new Error('Unable to login! password')
+        throw new Error('Unable to login!')
     }
 
     return user
