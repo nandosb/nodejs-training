@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="POST" action="/login" name="login" enctype="application/json">
+        <div>
+            <input type="text" name="username" placeholder="User name" value="{{username}}">
+        </div>
+        <div>
+            <input type="password" name="password" placeholder="Password">
+        </div>
+        <div>
+            <input type="submit" value="Login">
+        </div>
+    </form>
+    <div id="error"></div>
+    
+    {{!-- <script src="/js/app.js"></script> --}}
+</body>
+</html>

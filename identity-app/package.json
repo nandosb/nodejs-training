@@ -1,0 +1,27 @@
+{
+  "name": "identity",
+  "version": "1.0.0",
+  "description": "Enables login across multiple apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js 3000 -e js,hbs"
+  },
+  "author": "Fernando Serrano",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie": "^0.4.1",
+    "domain-name-parser": "^2.3.0",
+    "express": "^4.17.1",
+    "hbs": "^4.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "multer": "^1.4.2",
+    "parse-domain": "^3.0.2",
+    "url-parse": "^1.4.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
